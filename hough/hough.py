@@ -7,8 +7,7 @@ from PIL import Image
 from math import floor,ceil,sin,cos,pi
 
 # parameters
-datadir = '../data'
-resultdir='../results'
+datadir = './cv/hough'
 
 '''1,2,3'''
 sigma=1
@@ -104,7 +103,7 @@ def to_img(img):
 
 def EdgeDetection(Igs, sigma):
 
-    size_filter=round(sigma*6)
+    size_filter=int(round(sigma*6))
     if size_filter%2==0:
         size_filter+=1
 
@@ -237,8 +236,8 @@ def HoughLines(H,rhoRes,thetaRes,nLines):
     # non maximum suppression
     h,w = H.shape
 
-    pad_h = max(round(h/nLines/10),1)
-    pad_w = max(round(w/nLines/10),1)
+    pad_h = max(int(round(h/nLines/10)),1)
+    pad_w = max(int(round(w/nLines/10)),1)
 
     print(pad_h, pad_w)
 
@@ -297,7 +296,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
 
         #vertical
         if abs(m)>h:
-            x=round(lRho[i]/lcostheta[i])
+            x=int(round(lRho[i]/lcostheta[i]))
             x=min(x,h-1)
             x=max(x,0)
             for y in range(w):
@@ -315,7 +314,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                     continuous=False
         #horizontal
         elif abs(m)<1/w:
-            y=round(lRho[i]/lsintheta[i])
+            y=int(round(lRho[i]/lsintheta[i]))
             y=min(y,w-1)
             y=max(y,0)
             for x in range(h):
@@ -336,7 +335,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
             prev=None
             if abs(m)>=1:
                 for y in range(w):
-                    x=round((y-lc[i])/m)
+                    x=int(round((y-lc[i])/m))
                     x=min(x,h-1)
                     x=max(x,0)
                     Ilinesnob[x][y]=Ilines[x][y]=1
@@ -344,9 +343,9 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                     pool=[Im_pad[x+chklen][y+chklen]]
                     for k in range(1,chklen+1):
                         yf=y-k/m
-                        pool.append(Im_pad[x+k+chklen][round(yf)+chklen])
+                        pool.append(Im_pad[x+k+chklen][int(round(yf))+chklen])
                         yf=y+k/m
-                        pool.append(Im_pad[x-k+chklen][round(yf)+chklen])
+                        pool.append(Im_pad[x-k+chklen][int(round(yf))+chklen])
 
                     if max(pool)>threshold:
                         if not continuous:
@@ -362,7 +361,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                         continuous=False
             else:
                 for x in range(h):
-                    y=round(m*x+lc[i])
+                    y=int(round(m*x+lc[i]))
                     y=min(y,w-1)
                     y=max(y,0)
                     Ilinesnob[x][y]=Ilines[x][y]=1
@@ -370,9 +369,9 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                     pool=[Im_pad[x+chklen][y+chklen]]
                     for k in range(1,chklen+1):
                         xf=x-m
-                        pool.append(Im_pad[round(xf)+chklen][y+k+chklen])
+                        pool.append(Im_pad[int(round(xf))+chklen][y+k+chklen])
                         xf=x+m
-                        pool.append(Im_pad[round(xf)+chklen][y-k+chklen])
+                        pool.append(Im_pad[int(round(xf))+chklen][y-k+chklen])
 
                     if max(pool)>threshold:
                         if not continuous:
@@ -399,7 +398,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
         start=l[i]['start']
         end=l[i]['end']
         if abs(m)>h:
-            x=round(lRho[i]/lcostheta[i])
+            x=int(round(lRho[i]/lcostheta[i]))
             x=min(x,h-1)
             x=max(x,0)
             if start[1]>end[1]:
@@ -408,7 +407,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                 Ilinesseg[x][y]=1
                 Ilinessegnob[x][y]=1
         elif abs(m)<1/w:
-            y=round(lRho[i]/lsintheta[i])
+            y=int(round(lRho[i]/lsintheta[i]))
             y=min(y,w-1)
             y=max(y,0)
             if start[0]>end[0]:
@@ -421,7 +420,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                 if start[1]>end[1]:
                     start,end = end,start
                 for y in range(start[1],end[1]+1):
-                    x=round((y-lc[i])/m)
+                    x=int(round((y-lc[i])/m))
                     x=min(x,h-1)
                     x=max(x,0)
                     Ilinesseg[x][y]=1
@@ -430,7 +429,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
                 if start[0]>end[0]:
                     start,end = end,start
                 for x in range(start[0],end[0]+1):
-                    y=round(m*x+lc[i])
+                    y=int(round(m*x+lc[i]))
                     y=min(y,w-1)
                     y=max(y,0)
                     Ilinesseg[x][y]=1
@@ -444,7 +443,7 @@ def HoughLineSegments(lRho,lTheta,Im,threshold):
 
 def main():
 
-    for img_path in glob.glob(datadir+'/*.jpg'):
+    for img_path in glob.glob(datadir+'/*.png'):
         img = Image.open(img_path).convert("L")
 
         Igs = np.array(img)
